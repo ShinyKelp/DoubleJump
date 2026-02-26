@@ -127,7 +127,17 @@ namespace DoubleJump
                     self.animation != Player.AnimationIndex.VineGrab && self.animation != Player.AnimationIndex.ZeroGPoleGrab &&
                     self.animation != Player.AnimationIndex.CorridorTurn;
 
-                if (wantToDoubleJump && !busyEating &&
+                bool usingGrappleworm = false;
+                if (!MMF.cfgOldTongue.Value)
+                {
+                    for (int i = 0; i < self.grasps.Length; ++i)
+                    {
+                        if (self.grasps[i] != null && self.grasps[i].grabbed is TubeWorm tb && !tb.dead)
+                            usingGrappleworm = true;
+                    }
+                }
+
+                if (wantToDoubleJump && !busyEating && !usingGrappleworm &&
                     self.Consious && idleAction &&
                     self.onBack == null
                     && djWindowCount == 0)
@@ -337,7 +347,8 @@ namespace DoubleJump
         {
             if (!hasImprovedInput)
                 return player.input[0].jmp && player.wantToJump > 0;
-            else return CheckJustPressedInput(player);
+            else 
+                return CheckJustPressedInput(player);
         }
         private bool CheckJustPressedInput(Player player)
         {
